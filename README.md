@@ -19,8 +19,11 @@ This project presents a comprehensive comparison of classical machine learning a
 
 ## Project Structure
 ├── notebook/ # Full analysis notebook (data prep, EDA, modeling, evaluation)
+
 ├── data/ # Dataset (Pakistan AQI, 10 cities, 2015-2025) — sourced from Kaggle
+
 ├── paper/ # Full IEEE-format research paper (PDF + LaTeX source)
+
 └── README.md
 
 
