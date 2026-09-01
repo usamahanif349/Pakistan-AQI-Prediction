@@ -18,3 +18,17 @@ This project presents a comprehensive comparison of classical machine learning a
 **Finding:** Tree-based ensemble methods (Random Forest, XGBoost, Gradient Boosting) consistently outperformed both linear/kernel-based classical methods and a deep learning ANN approach, across regression and classification tasks — all results validated via 5-fold cross-validation.
 
 ## Project Structure
+├── notebook/ # Full analysis notebook (data prep, EDA, modeling, evaluation)
+├── data/ # Dataset (Pakistan AQI, 10 cities, 2015-2025) — sourced from Kaggle
+├── paper/ # Full IEEE-format research paper (PDF + LaTeX source)
+└── README.md
+
+
+## Tech Stack
+Python, Pandas, Scikit-learn, XGBoost, TensorFlow/Keras, Matplotlib, Seaborn
+
+## Dataset
+[Pakistan Air Quality Index: 10 Cities, 2015-2025](https://www.kaggle.com/datasets/alitaqishah/pakistan-air-quality-index-10-cities-20152025) (Kaggle)
+
+## Paper
+Full methodology, results, and discussion available in [`/paper/`](./paper).
