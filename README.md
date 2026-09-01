@@ -34,4 +34,4 @@ Python, Pandas, Scikit-learn, XGBoost, TensorFlow/Keras, Matplotlib, Seaborn
 [Pakistan Air Quality Index: 10 Cities, 2015-2025](https://www.kaggle.com/datasets/alitaqishah/pakistan-air-quality-index-10-cities-20152025) (Kaggle)
 
 ## Paper
-Full methodology, results, and discussion available in [`AQI_Prediction_Paper.pdf`](https://raw.githubusercontent.com/usamahanif349/Pakistan-AQI-Prediction/main/AQI_Prediction_Paper.pdf).
+Full methodology, results, and discussion available in [`AQI_Prediction_Paper.pdf`](./AQI_Prediction_Paper.pdf).
