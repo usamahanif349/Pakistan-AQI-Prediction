@@ -1,0 +1,11 @@
+city,province,region,latitude,longitude,population_millions,is_industrial_hub,is_coastal,is_capital,major_pollution_sources,us_consulate_monitor,monitoring_start_year
+Lahore,Punjab,North Punjab,31.5204,74.3587,14.0,1,0,0,"Vehicles, brick kilns, crop burning (Oct-Nov), industrial",1,2019
+Karachi,Sindh,Coastal South,24.8607,67.0011,16.1,1,1,0,"Vehicles, industrial, port activity, sea breeze fluctuations",1,2019
+Islamabad,Islamabad Capital Territory,North,33.6844,73.0479,2.2,0,0,1,"Vehicles, winter inversions, crop burning spillover",1,2019
+Rawalpindi,Punjab,North Punjab,33.6007,73.0679,2.3,0,0,0,"Vehicles, industrial, crop burning spillover",0,2021
+Faisalabad,Punjab,Central Punjab,31.4187,73.0791,3.8,1,0,0,"Textile/industrial emissions, vehicles, crop burning",0,2021
+Peshawar,Khyber Pakhtunkhwa,Northwest,34.0151,71.5249,2.3,0,0,0,"Vehicles, brick kilns, cross-border dust (Afghanistan)",1,2019
+Multan,Punjab,South Punjab,30.1978,71.4711,2.0,0,0,0,"Cotton ginning, brick kilns, vehicles, crop burning",0,2021
+Gujranwala,Punjab,North Punjab,32.1877,74.1945,2.3,1,0,0,"Steel/industrial, vehicles, crop burning",0,2021
+Quetta,Balochistan,Southwest,30.1798,66.975,1.1,0,0,0,"Vehicles, industrial, dust from Balochistan terrain",0,2021
+Hyderabad,Sindh,Sindh,25.396,68.3578,1.8,0,0,0,"Vehicles, industrial, dust, agriculture",0,2021
