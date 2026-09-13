@@ -3,5 +3,5 @@ joblib
 pandas
 numpy
 matplotlib
-scikit-learn
+scikit-learn==1.6.1
 xgboost
