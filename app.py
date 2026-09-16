@@ -335,7 +335,7 @@ elif active == "map":
     map_df = pd.DataFrame(map_rows)
 
     if map_df["lat"].notna().all():
-        st.map(map_df.rename(columns={"lat": "latitude", "lon": "longitude"}), size=8000, color=A)
+        st.map(map_df.rename(columns={"lat": "latitude", "lon": "longitude"}), size=10000, color=A)
     else:
         st.warning("Some cities have no latitude or longitude in city_lookup.json, so only the table is shown.")
 
