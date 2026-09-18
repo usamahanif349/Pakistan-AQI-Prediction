@@ -33,7 +33,7 @@ PAGE_BG = {
     "heatmap": "linear-gradient(165deg, #FEF5F7 0%, #FCE9ED 100%)",
 }
 TITLE_INK = "#0B2A3B"   # dark navy for the wordmark, high contrast on light bg
-GOLD = "#C9840A"        # underline colour — warm but not the AI-cliché terracotta
+GOLD = "#C9840A"        # underline colour
 INK = "#1E2E3A"          # body text
 MUTED = "#5B7387"        # secondary text
 
@@ -164,7 +164,12 @@ st.markdown(f"""
         box-shadow: 0 2px 10px rgba(11,42,59,0.05);
     }}
     div[data-testid="stMetricLabel"] p {{ color: {MUTED} !important; font-weight: 600; }}
-    div[data-testid="stMetricValue"] {{ color: {TITLE_INK} !important; }}
+    div[data-testid="stMetricValue"] {{ 
+        color: {TITLE_INK} !important; 
+        font-size: 1.25rem !important; 
+        white-space: normal !important;
+        word-break: break-word !important;
+    }}
 
     /* ---------------- buttons & inputs ---------------- */
     .stButton>button, .stDownloadButton>button {{
@@ -350,7 +355,7 @@ def draw_gauge(value, color):
 
 
 # ==================================================================
-#  SIDEBAR — inputs live here, scoped to the active section
+#  SIDEBAR
 # ==================================================================
 with st.sidebar:
     if active == "predict":
@@ -414,13 +419,13 @@ panel()
 # ===================== PREDICT =====================
 if active == "predict":
     # --- Live Data Fetch ---
-    live_data = get_live_city_aqi(city)
+    live_data = get_live_city_aqi(city, city_lookup)
     if live_data and live_data.get("live_aqi") is not None:
         st.subheader(f"🌐 Live Monitoring Feed: {city}")
         col1, col2, col3 = st.columns(3)
         col1.metric("Live Observed AQI", live_data["live_aqi"])
         col2.metric("PM2.5 (µg/m³)", live_data.get("pm25", "N/A"))
-        col3.metric("Last Updated", live_data.get("time", "N/A"))
+        col3.metric("Last Updated", str(live_data.get("time", "N/A")))
         st.divider()
 
     if predict_btn:
