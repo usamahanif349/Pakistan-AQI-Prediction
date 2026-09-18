@@ -3,7 +3,7 @@ import requests
 
 WAQI_API_BASE_URL = "https://api.waqi.info/feed"
 
-def get_live_city_aqi(city_name: str, api_token: str = "demo"):
+def get_live_city_aqi(city_name: str, API_TOKEN = "956d68b497aaec4796bab052547399e7e014bff1"):
     """
     Fetches real-time AQI and pollutant data for a given city.
     Returns None if the network request fails.
