@@ -176,21 +176,24 @@ st.markdown(f"""
         overflow: visible !important;
     }}
 
-    /* Distinct Contrast Sidebar Panel */
-    section[data-testid="stSidebar"] {{
-        background-color: #F1F5F9 !important;
-        border-right: 2px solid {BORDER_COLOR};
-    }}
-    .sb-title {{
+    /* Dark Contrast Sidebar Panel */
+    section[data-testid="stSidebar"] {
+        background-color: #0F172A !important;
+        border-right: 2px solid #1E293B;
+    }
+    section[data-testid="stSidebar"] * {
+        color: #F8FAFC !important;
+    }
+    .sb-title {
         font-size: 0.95rem;
         font-weight: 800;
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        color: #334155 !important;
+        color: #94A3B8 !important;
         margin-bottom: 16px;
         padding-bottom: 6px;
-        border-bottom: 2px solid #CBD5E1;
-    }}
+        border-bottom: 2px solid #334155;
+    }
 </style>
 """, unsafe_allow_html=True)
 
