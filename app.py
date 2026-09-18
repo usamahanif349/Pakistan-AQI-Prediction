@@ -176,12 +176,25 @@ st.markdown(f"""
         overflow: visible !important;
     }}
 
+    /* Dark Contrast Sidebar Panel */
     section[data-testid="stSidebar"] {{
         background-color: #0F172A !important;
         border-right: 2px solid #1E293B;
     }}
-    section[data-testid="stSidebar"] * {{
+    section[data-testid="stSidebar"] label, 
+    section[data-testid="stSidebar"] p, 
+    section[data-testid="stSidebar"] span, 
+    section[data-testid="stSidebar"] h1, 
+    section[data-testid="stSidebar"] h2, 
+    section[data-testid="stSidebar"] h3 {{
         color: #F8FAFC !important;
+    }}
+    section[data-testid="stSidebar"] div[data-baseweb="select"] * {{
+        color: #0F172A !important;
+    }}
+    section[data-testid="stSidebar"] div[data-baseweb="select"] > div {{
+        background-color: #FFFFFF !important;
+        border: 1px solid #CBD5E1 !important;
     }}
     .sb-title {{
         font-size: 0.95rem;
