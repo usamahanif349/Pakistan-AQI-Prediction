@@ -360,14 +360,14 @@ with st.sidebar:
         meta = city_lookup[city]
         st.markdown(
             f"""
-            <div class="infocard" style="background: #1E293B; border-color: #334155;">
-              <p class="infocard-title" style="color: #F8FAFC !important;">{city}</p>
-              <p style="color: #94A3B8 !important;">Province: {meta.get('province', '—')}</p>
-              <p style="color: #94A3B8 !important;">Population: {meta.get('population_millions', '—')}M</p>
+            <div style="background: #1E293B; border: 1px solid #334155; border-radius: 12px; padding: 16px; margin-top: 16px;">
+              <p style="color: #FFFFFF !important; font-weight: 800; font-size: 1.1rem; margin: 0 0 6px 0;">{city}</p>
+              <p style="color: #CBD5E1 !important; font-size: 0.9rem; margin: 2px 0;">Province: {meta.get('province', '—')}</p>
+              <p style="color: #CBD5E1 !important; font-size: 0.9rem; margin: 2px 0;">Population: {meta.get('population_millions', '—')}M</p>
               <div class="chip-row">
-                {'<span class="chip" style="background:#334155; color:#F8FAFC !important; border-color:#475569;">Industrial hub</span>' if meta.get('is_industrial_hub') else ''}
-                {'<span class="chip" style="background:#334155; color:#F8FAFC !important; border-color:#475569;">Coastal</span>' if meta.get('is_coastal') else ''}
-                {'<span class="chip" style="background:#334155; color:#F8FAFC !important; border-color:#475569;">Capital</span>' if meta.get('is_capital') else ''}
+                {'<span class="chip" style="background:#334155; color:#FFFFFF !important; border: 1px solid #475569;">Industrial hub</span>' if meta.get('is_industrial_hub') else ''}
+                {'<span class="chip" style="background:#334155; color:#FFFFFF !important; border: 1px solid #475569;">Coastal</span>' if meta.get('is_coastal') else ''}
+                {'<span class="chip" style="background:#334155; color:#FFFFFF !important; border: 1px solid #475569;">Capital</span>' if meta.get('is_capital') else ''}
               </div>
             </div>
             """,
