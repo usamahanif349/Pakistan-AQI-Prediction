@@ -35,36 +35,36 @@ def pm25_to_us_aqi(pm25):
 
 def get_live_city_aqi(city_name, city_lookup):
     """
-    Fetches real-time PM2.5 data from WAQI API and computes standard US AQI.
+    Fetches real-time PM2.5 data from WAQI API and computes standard US AQI,
+    strictly constraining searches to Pakistani monitoring stations.
     """
     meta = city_lookup.get(city_name, {})
     lat = meta.get("latitude")
     lon = meta.get("longitude")
 
-    if lat and lon:
-        url = f"https://api.waqi.info/feed/geo:{lat};{lon}/?token={API_TOKEN}"
-    else:
-        url = f"https://api.waqi.info/feed/{city_name}/?token={API_TOKEN}"
-
+    # Force city text search with 'Pakistan' string to avoid cross-border nearest-neighbor station routing
+    query_url = f"https://api.waqi.info/feed/{city_name.lower()}-pakistan/?token={API_TOKEN}"
+    
     try:
-        response = requests.get(url, timeout=5)
+        response = requests.get(query_url, timeout=5)
         data = response.json()
+
+        if data.get("status") != "ok" and lat and lon:
+            # Fallback to coordinate lookup if city endpoint fails
+            query_url = f"https://api.waqi.info/feed/geo:{lat};{lon}/?token={API_TOKEN}"
+            response = requests.get(query_url, timeout=5)
+            data = response.json()
 
         if data.get("status") == "ok":
             iaqi = data["data"].get("iaqi", {})
             raw_pm25 = iaqi.get("pm25", {}).get("v", None)
-
-            # Get raw station AQI provided by WAQI feed
             api_aqi = data["data"].get("aqi", None)
 
-            # Convert PM2.5 concentration to EPA US AQI
             calculated_us_aqi = pm25_to_us_aqi(raw_pm25)
-
-            # Fallback to API AQI if PM2.5 calculation is unavailable
             final_aqi = calculated_us_aqi if calculated_us_aqi is not None else api_aqi
 
             time_str = data["data"].get("time", {}).get("s", "N/A")
-            station_name = data["data"].get("city", {}).get("name", city_name)
+            station_name = data["data"].get("city", {}).get("name", f"{city_name}, Pakistan")
 
             return {
                 "live_aqi": final_aqi,
