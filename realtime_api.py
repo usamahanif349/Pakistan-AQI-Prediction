@@ -1,35 +1,30 @@
-import os
 import requests
 
-WAQI_API_BASE_URL = "https://api.waqi.info/feed"
+# Your WAQI API Token
+API_TOKEN = "956d68b497aaec4796bab052547399e7e014bff1"
 
-def get_live_city_aqi(city_name: str, API_TOKEN = "956d68b497aaec4796bab052547399e7e014bff1"):
+def get_live_city_aqi(city_name):
     """
-    Fetches real-time AQI and pollutant data for a given city.
-    Returns None if the network request fails.
+    Fetches real-time AQI and PM2.5 data for a given city from the WAQI API.
     """
+    url = f"https://api.waqi.info/feed/{city_name}/?token={API_TOKEN}"
     try:
-        url = f"{WAQI_API_BASE_URL}/{city_name}/?token={api_token}"
         response = requests.get(url, timeout=5)
+        data = response.json()
         
-        if response.status_code == 200:
-            data = response.json()
-            if data.get("status") == "ok":
-                payload = data.get("data", {})
-                iaqi = payload.get("iaqi", {})
-                
-                return {
-                    "city": city_name,
-                    "live_aqi": payload.get("aqi"),
-                    "dominant_pollutant": payload.get("dominentpol"),
-                    "pm25": iaqi.get("pm25", {}).get("v"),
-                    "pm10": iaqi.get("pm10", {}).get("v"),
-                    "temperature": iaqi.get("t", {}).get("v"),
-                    "humidity": iaqi.get("h", {}).get("v"),
-                    "time": payload.get("time", {}).get("s")
-                }
+        if data.get("status") == "ok":
+            aqi = data["data"]["aqi"]
+            iaqi = data["data"].get("iaqi", {})
+            pm25 = iaqi.get("pm25", {}).get("v", "N/A")
+            time_str = data["data"].get("time", {}).get("s", "N/A")
+            
+            return {
+                "live_aqi": aqi,
+                "pm25": pm25,
+                "time": time_str
+            }
+        else:
+            return None
     except Exception as e:
-        print(f"[API Warning] Failed to fetch live data for {city_name}: {e}")
+        print(f"Error fetching live data: {e}")
         return None
-
-    return None
