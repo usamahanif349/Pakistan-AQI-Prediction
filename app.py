@@ -4,6 +4,7 @@ import json
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import pydeck as pdk
 from realtime_api import get_live_city_aqi
 
 # Modern tab title and icon
@@ -487,7 +488,7 @@ if active == "predict":
     else:
         st.info("Set your inputs in the sidebar, then click **Predict AQI**.")
 
-# ===================== MAP =====================
+# ===================== MAP (INTERACTIVE GEOSPATIAL DASHBOARD) =====================
 elif active == "map":
     map_rows = []
     for c in CITIES:
@@ -495,22 +496,108 @@ elif active == "map":
         pred = reg_model.predict(row)[0]
         cat = clf_model.predict(row)[0]
         meta = city_lookup[c]
+        
+        # Color mapping (RGB for PyDeck)
+        if pred <= 50:
+            color_rgb = [16, 185, 129, 200]    # Green
+        elif pred <= 100:
+            color_rgb = [245, 158, 11, 200]   # Yellow
+        elif pred <= 150:
+            color_rgb = [249, 115, 22, 200]   # Orange
+        elif pred <= 200:
+            color_rgb = [239, 68, 68, 200]    # Red
+        elif pred <= 300:
+            color_rgb = [139, 92, 246, 200]   # Purple
+        else:
+            color_rgb = [107, 33, 168, 200]   # Dark Purple
+
         map_rows.append({
-            "city": c, "lat": meta.get("latitude"), "lon": meta.get("longitude"),
-            "Predicted AQI": round(pred, 1), "Category": cat
+            "city": c,
+            "province": meta.get("province", "N/A"),
+            "latitude": meta.get("latitude"),
+            "longitude": meta.get("longitude"),
+            "Predicted_AQI": round(pred, 1),
+            "Category": cat,
+            "color_rgb": color_rgb,
+            "elevation": pred * 150
         })
 
     map_df = pd.DataFrame(map_rows)
 
-    if map_df["lat"].notna().all():
-        st.map(map_df.rename(columns={"lat": "latitude", "lon": "longitude"}), size=8000)
-    else:
-        st.warning("Some cities have no latitude or longitude in city_lookup.json, so only the table is shown.")
+    c_m1, c_m2 = st.columns([1, 3])
+    with c_m1:
+        map_mode = st.radio("Map Visualization Mode", ["2D Bubble Pins", "3D Extrusion Columns", "Regional Heatmap"], key="map_mode_select")
 
-    sorted_map_df = map_df.sort_values("Predicted AQI", ascending=False)
+    view_state = pdk.ViewState(
+        latitude=30.3753,
+        longitude=69.3451,
+        zoom=4.8,
+        pitch=45 if map_mode == "3D Extrusion Columns" else 0
+    )
+
+    layers = []
+    
+    if map_mode == "2D Bubble Pins":
+        layers.append(
+            pdk.Layer(
+                "ScatterplotLayer",
+                map_df,
+                get_position=["longitude", "latitude"],
+                get_fill_color="color_rgb",
+                get_radius=25000,
+                pickable=True,
+                opacity=0.8,
+                stroked=True,
+                filled=True,
+                radius_scale=1,
+                radius_min_pixels=10,
+                radius_max_pixels=30,
+                get_line_color=[255, 255, 255],
+                line_width_min_pixels=1.5,
+            )
+        )
+    elif map_mode == "3D Extrusion Columns":
+        layers.append(
+            pdk.Layer(
+                "ColumnLayer",
+                map_df,
+                get_position=["longitude", "latitude"],
+                get_elevation="elevation",
+                elevation_scale=1,
+                radius=18000,
+                get_fill_color="color_rgb",
+                pickable=True,
+                auto_highlight=True,
+            )
+        )
+    elif map_mode == "Regional Heatmap":
+        layers.append(
+            pdk.Layer(
+                "HeatmapLayer",
+                map_df,
+                get_position=["longitude", "latitude"],
+                get_weight="Predicted_AQI",
+                radius_pixels=60,
+            )
+        )
+
+    r = pdk.Deck(
+        layers=layers,
+        initial_view_state=view_state,
+        tooltip={
+            "html": "<b>{city}</b> ({province})<br/>"
+                    "Predicted AQI: <b>{Predicted_AQI}</b><br/>"
+                    "Status: <b>{Category}</b>",
+            "style": {"backgroundColor": "#0F172A", "color": "#FFFFFF", "fontSize": "12px", "borderRadius": "8px"}
+        }
+    )
+
+    st.pydeck_chart(r)
+
+    st.subheader("Regional City Rankings")
+    sorted_map_df = map_df[["city", "province", "Predicted_AQI", "Category"]].sort_values("Predicted_AQI", ascending=False)
     st.dataframe(sorted_map_df, use_container_width=True, hide_index=True)
-    st.download_button("⬇️ Download this table as CSV", sorted_map_df.to_csv(index=False),
-                        file_name="aqi_map_all_cities.csv", mime="text/csv")
+    st.download_button("⬇️ Download map data as CSV", sorted_map_df.to_csv(index=False), file_name="pakistan_aqi_spatial_rankings.csv", mime="text/csv")
 
 # ===================== HISTORICAL TREND =====================
 elif active == "trend":
