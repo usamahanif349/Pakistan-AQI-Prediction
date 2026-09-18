@@ -3,9 +3,6 @@ import requests
 API_TOKEN = "956d68b497aaec4796bab052547399e7e014bff1"
 
 def pm25_to_us_aqi(pm25):
-    """
-    Converts PM2.5 concentration (µg/m³) into standard US EPA AQI using official breakpoints.
-    """
     if pm25 is None or pm25 == "N/A":
         return None
     try:
@@ -34,15 +31,10 @@ def pm25_to_us_aqi(pm25):
 
 
 def get_live_city_aqi(city_name, city_lookup):
-    """
-    Fetches real-time PM2.5 data from WAQI API and computes standard US AQI,
-    strictly constraining searches to Pakistani monitoring stations.
-    """
     meta = city_lookup.get(city_name, {})
     lat = meta.get("latitude")
     lon = meta.get("longitude")
 
-    # Force city text search with 'Pakistan' string to avoid cross-border nearest-neighbor station routing
     query_url = f"https://api.waqi.info/feed/{city_name.lower()}-pakistan/?token={API_TOKEN}"
     
     try:
@@ -50,7 +42,6 @@ def get_live_city_aqi(city_name, city_lookup):
         data = response.json()
 
         if data.get("status") != "ok" and lat and lon:
-            # Fallback to coordinate lookup if city endpoint fails
             query_url = f"https://api.waqi.info/feed/geo:{lat};{lon}/?token={API_TOKEN}"
             response = requests.get(query_url, timeout=5)
             data = response.json()
