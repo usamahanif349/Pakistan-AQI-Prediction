@@ -219,7 +219,7 @@ st.markdown(f"""
 st.markdown("""
 <div class="masthead">
   <div class="titleblock">
-    <p class="wordmark">🌫️ Pakistan AQI Predictor</p>
+    <p class="wordmark">Pakistan AQI Predictor</p>
     <span class="goldrule"></span>
   </div>
   <p class="standfirst">Predicts the Air Quality Index value and health category for 10 Pakistani cities
@@ -423,9 +423,10 @@ if active == "predict":
     if live_data and live_data.get("live_aqi") is not None:
         st.subheader(f"🌐 Live Monitoring Feed: {city}")
         col1, col2, col3 = st.columns(3)
-        col1.metric("Live Observed AQI", live_data["live_aqi"])
-        col2.metric("PM2.5 (µg/m³)", live_data.get("pm25", "N/A"))
+        col1.metric("Live US AQI (EPA)", live_data["live_aqi"])
+        col2.metric("PM2.5 Concentration", f"{live_data.get('pm25', 'N/A')} µg/m³")
         col3.metric("Last Updated", str(live_data.get("time", "N/A")))
+        st.caption(f"📍 Station: **{live_data.get('station', city)}** | Calculated using US EPA PM2.5 breakpoints.")
         st.divider()
 
     if predict_btn:
