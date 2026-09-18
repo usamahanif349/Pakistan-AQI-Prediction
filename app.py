@@ -6,16 +6,15 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from realtime_api import get_live_city_aqi
 
-# Clean, professional browser tab title and modern icon
+# Modern tab title and icon
 st.set_page_config(page_title="Pakistan AQI Intelligence Platform", page_icon="🟢", layout="wide")
 
 # ==================================================================
-#  DESIGN TOKENS — Enterprise Dark-Slate Theme
+#  DESIGN TOKENS — Enterprise Theme with Distinct Sidebar & Navbar
 # ==================================================================
 PRIMARY = "#0F172A"       # Deep slate navy
-ACCENT_GREEN = "#10B981"  # Emerald accent
-BORDER_COLOR = "#E2E8F0"  # Subtle structural gray
-CARD_BG = "#FFFFFF"       # Crisp white card surfaces
+BORDER_COLOR = "#CBD5E1"  # Structured gray border
+CARD_BG = "#FFFFFF"       # White card surfaces
 TEXT_MAIN = "#0F172A"     # High-contrast primary text
 TEXT_MUTED = "#64748B"    # Secondary text
 
@@ -36,7 +35,7 @@ if active not in NAV_KEYS:
     active = "predict"
 
 # ==================================================================
-#  PROFESSIONAL CSS OVERHAUL
+#  CSS OVERHAUL
 # ==================================================================
 st.markdown(f"""
 <style>
@@ -50,13 +49,13 @@ st.markdown(f"""
 
     .stTabs {{ display: none !important; }}
 
-    /* Masthead Header */
+    /* Header Masthead */
     .masthead-container {{
         display: flex;
         align-items: center;
         justify-content: space-between;
         padding: 16px 0;
-        border-bottom: 1px solid {BORDER_COLOR};
+        border-bottom: 2px solid {BORDER_COLOR};
         margin-bottom: 20px;
     }}
     .brand-title {{
@@ -72,44 +71,45 @@ st.markdown(f"""
         margin-top: 2px;
     }}
 
-    /* Segmented Navigation Bar */
+    /* Distinct Navigation Bar Container */
     .nav-bar-container {{
         display: grid;
         grid-template-columns: repeat(5, 1fr);
-        gap: 6px;
-        background: #E2E8F0;
-        padding: 4px;
+        gap: 8px;
+        background: #CBD5E1;
+        padding: 6px;
         border-radius: 12px;
         margin-bottom: 24px;
+        box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
     }}
     .nav-item {{
         display: block;
         text-align: center;
-        padding: 10px 0;
-        font-size: 0.88rem;
-        font-weight: 600;
-        color: {TEXT_MUTED} !important;
+        padding: 11px 0;
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #334155 !important;
         text-decoration: none !important;
         border-radius: 8px;
         transition: all 0.15s ease;
     }}
     .nav-item:hover {{
-        color: {TEXT_MAIN} !important;
-        background: rgba(255, 255, 255, 0.5);
+        color: {PRIMARY} !important;
+        background: rgba(255, 255, 255, 0.6);
     }}
     .nav-item.active {{
         background: #FFFFFF !important;
-        color: {PRIMARY} !important;
-        font-weight: 700;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        color: #2563EB !important;
+        font-weight: 800;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.12);
     }}
 
-    /* Hero Live Status Card */
+    /* Dynamic Live Hero Card */
     .hero-aqi-card {{
         border-radius: 16px;
         padding: 24px 28px;
         color: #FFFFFF !important;
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.12);
         margin-bottom: 24px;
     }}
     .hero-aqi-card * {{ color: #FFFFFF !important; }}
@@ -135,19 +135,19 @@ st.markdown(f"""
         align-items: center;
         margin-top: 20px;
         padding-top: 14px;
-        border-top: 1px solid rgba(255,255,255,0.2);
+        border-top: 1px solid rgba(255,255,255,0.25);
         font-size: 0.88rem;
         font-weight: 500;
     }}
 
-    /* Standard Content Cards */
+    /* Standard Cards */
     .infocard {{
         border-radius: 12px;
         padding: 16px 18px;
         margin: 12px 0;
         border: 1px solid {BORDER_COLOR};
         background: #FFFFFF;
-        box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
     }}
     .infocard .infocard-title {{
         font-weight: 800; font-size: 1rem; margin: 0 0 6px 0; color: {PRIMARY} !important;
@@ -156,10 +156,10 @@ st.markdown(f"""
     .chip-row {{ display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }}
     .chip {{
         font-size: .8rem; font-weight: 700; padding: 4px 12px;
-        border-radius: 999px; background: #F1F5F9; color: {PRIMARY} !important; border: 1px solid {BORDER_COLOR};
+        border-radius: 999px; background: #E2E8F0; color: {PRIMARY} !important; border: 1px solid {BORDER_COLOR};
     }}
 
-    /* Metrics Override */
+    /* Metric Font Fix — Prevents Text Cutoff (...) */
     div[data-testid="stMetric"] {{
         background-color: #FFFFFF;
         border: 1px solid {BORDER_COLOR};
@@ -167,24 +167,34 @@ st.markdown(f"""
         padding: 16px;
         box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }}
+    div[data-testid="stMetricValue"] {{ 
+        color: {PRIMARY} !important; 
+        font-size: 1.1rem !important; 
+        line-height: 1.3 !important;
+        white-space: normal !important;
+        word-break: break-word !important;
+        overflow: visible !important;
+    }}
 
-    /* Sidebar Clean Styling */
+    /* Distinct Contrast Sidebar Panel */
     section[data-testid="stSidebar"] {{
-        background-color: #FFFFFF;
-        border-right: 1px solid {BORDER_COLOR};
+        background-color: #F1F5F9 !important;
+        border-right: 2px solid {BORDER_COLOR};
     }}
     .sb-title {{
         font-size: 0.95rem;
-        font-weight: 700;
+        font-weight: 800;
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        color: {TEXT_MUTED} !important;
+        color: #334155 !important;
         margin-bottom: 16px;
+        padding-bottom: 6px;
+        border-bottom: 2px solid #CBD5E1;
     }}
 </style>
 """, unsafe_allow_html=True)
 
-# ---------- Top Masthead Header ----------
+# ---------- Top Masthead ----------
 st.markdown("""
 <div class="masthead-container">
     <div>
