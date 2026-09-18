@@ -10,7 +10,7 @@ from realtime_api import get_live_city_aqi
 st.set_page_config(page_title="Pakistan AQI Intelligence Platform", page_icon="🟢", layout="wide")
 
 # ==================================================================
-#  DESIGN TOKENS — Enterprise Theme with Distinct Sidebar & Navbar
+#  DESIGN TOKENS — Enterprise Theme with Dark Sidebar
 # ==================================================================
 PRIMARY = "#0F172A"       # Deep slate navy
 BORDER_COLOR = "#CBD5E1"  # Structured gray border
@@ -176,15 +176,14 @@ st.markdown(f"""
         overflow: visible !important;
     }}
 
-    /* Dark Contrast Sidebar Panel */
-    section[data-testid="stSidebar"] {
+    section[data-testid="stSidebar"] {{
         background-color: #0F172A !important;
         border-right: 2px solid #1E293B;
-    }
-    section[data-testid="stSidebar"] * {
+    }}
+    section[data-testid="stSidebar"] * {{
         color: #F8FAFC !important;
-    }
-    .sb-title {
+    }}
+    .sb-title {{
         font-size: 0.95rem;
         font-weight: 800;
         text-transform: uppercase;
@@ -193,7 +192,7 @@ st.markdown(f"""
         margin-bottom: 16px;
         padding-bottom: 6px;
         border-bottom: 2px solid #334155;
-    }
+    }}
 </style>
 """, unsafe_allow_html=True)
 
@@ -348,14 +347,14 @@ with st.sidebar:
         meta = city_lookup[city]
         st.markdown(
             f"""
-            <div class="infocard">
-              <p class="infocard-title">{city}</p>
-              <p>Province: {meta.get('province', '—')}</p>
-              <p>Population: {meta.get('population_millions', '—')}M</p>
+            <div class="infocard" style="background: #1E293B; border-color: #334155;">
+              <p class="infocard-title" style="color: #F8FAFC !important;">{city}</p>
+              <p style="color: #94A3B8 !important;">Province: {meta.get('province', '—')}</p>
+              <p style="color: #94A3B8 !important;">Population: {meta.get('population_millions', '—')}M</p>
               <div class="chip-row">
-                {'<span class="chip">Industrial hub</span>' if meta.get('is_industrial_hub') else ''}
-                {'<span class="chip">Coastal</span>' if meta.get('is_coastal') else ''}
-                {'<span class="chip">Capital</span>' if meta.get('is_capital') else ''}
+                {'<span class="chip" style="background:#334155; color:#F8FAFC !important; border-color:#475569;">Industrial hub</span>' if meta.get('is_industrial_hub') else ''}
+                {'<span class="chip" style="background:#334155; color:#F8FAFC !important; border-color:#475569;">Coastal</span>' if meta.get('is_coastal') else ''}
+                {'<span class="chip" style="background:#334155; color:#F8FAFC !important; border-color:#475569;">Capital</span>' if meta.get('is_capital') else ''}
               </div>
             </div>
             """,
