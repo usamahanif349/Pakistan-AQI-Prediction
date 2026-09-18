@@ -447,4 +447,4 @@ elif active == "heatmap":
     ax.set_xticklabels([m[:3] for m in MONTH_NAMES])
     ax.set_yticks(range(len(CITIES)))
     ax.set_yticklabels(CITIES)
-    st.pyplot(fig))
+    st.pyplot(fig)
