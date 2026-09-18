@@ -4,6 +4,7 @@ import json
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from realtime_api import get_live_city_aqi
 
 st.set_page_config(page_title="Pakistan AQI Predictor", page_icon="🌫️", layout="wide")
 
@@ -412,6 +413,16 @@ panel()
 
 # ===================== PREDICT =====================
 if active == "predict":
+    # --- Live Data Fetch ---
+    live_data = get_live_city_aqi(city)
+    if live_data and live_data.get("live_aqi") is not None:
+        st.subheader(f"🌐 Live Monitoring Feed: {city}")
+        col1, col2, col3 = st.columns(3)
+        col1.metric("Live Observed AQI", live_data["live_aqi"])
+        col2.metric("PM2.5 (µg/m³)", live_data.get("pm25", "N/A"))
+        col3.metric("Last Updated", live_data.get("time", "N/A"))
+        st.divider()
+
     if predict_btn:
         row = build_row(city, month, season, is_smog_season, is_crop_burning_season, is_monsoon_season)
         pred_aqi = reg_model.predict(row)[0]
