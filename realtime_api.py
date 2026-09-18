@@ -1,13 +1,21 @@
 import requests
 
-# Your WAQI API Token
 API_TOKEN = "956d68b497aaec4796bab052547399e7e014bff1"
 
-def get_live_city_aqi(city_name):
+def get_live_city_aqi(city_name, city_lookup):
     """
-    Fetches real-time AQI and PM2.5 data for a given city from the WAQI API.
+    Fetches real-time AQI and PM2.5 data using city coordinates
+    to ensure live readings from active 2026 sensors.
     """
-    url = f"https://api.waqi.info/feed/{city_name}/?token={API_TOKEN}"
+    meta = city_lookup.get(city_name, {})
+    lat = meta.get("latitude")
+    lon = meta.get("longitude")
+    
+    if lat and lon:
+        url = f"https://api.waqi.info/feed/geo:{lat};{lon}/?token={API_TOKEN}"
+    else:
+        url = f"https://api.waqi.info/feed/{city_name}/?token={API_TOKEN}"
+        
     try:
         response = requests.get(url, timeout=5)
         data = response.json()
