@@ -212,6 +212,49 @@ st.markdown(f"""
         font-size: .8rem; font-weight: 700; padding: 4px 12px;
         border-radius: 999px; background: {T}; color: {A} !important; border: 1px solid {A}55;
     }}
+
+    /* ---------------- HERO STATUS CARD ---------------- */
+    .aqi-hero-card {{
+        border-radius: 18px;
+        padding: 24px;
+        color: #FFFFFF !important;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+        margin-bottom: 20px;
+        transition: transform 0.2s ease;
+    }}
+    .aqi-hero-card:hover {{ transform: translateY(-2px); }}
+    .aqi-hero-card * {{ color: #FFFFFF !important; }}
+    .aqi-hero-header {{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }}
+    .aqi-hero-val {{
+        font-size: 3.2rem;
+        font-weight: 900;
+        line-height: 1;
+        margin: 4px 0;
+    }}
+    .aqi-hero-cat {{
+        font-size: 1.5rem;
+        font-weight: 800;
+        margin: 0;
+    }}
+    .aqi-hero-avatar {{
+        font-size: 3.8rem;
+        line-height: 1;
+    }}
+    .aqi-hero-footer {{
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 10px;
+        margin-top: 18px;
+        padding-top: 14px;
+        border-top: 1px solid rgba(255,255,255,0.25);
+        font-size: 0.92rem;
+        font-weight: 600;
+    }}
 </style>
 """, unsafe_allow_html=True)
 
@@ -416,18 +459,46 @@ with st.sidebar:
 
 panel()
 
+# Helper function to assign background colors, categories, and avatars based on AQI value
+def get_aqi_theme(val):
+    if val <= 50:
+        return "#22A55A", "Good", "😊"
+    elif val <= 100:
+        return "#D4A72C", "Moderate", "😐"
+    elif val <= 150:
+        return "#E27D2E", "Unhealthy for Sensitive Groups", "😷"
+    elif val <= 200:
+        return "#C0392B", "Unhealthy", "😷"
+    elif val <= 300:
+        return "#8E44AD", "Very Unhealthy", "🤢"
+    else:
+        return "#6C3483", "Hazardous", "🚨"
+
 # ===================== PREDICT =====================
 if active == "predict":
     # --- Live Data Fetch ---
     live_data = get_live_city_aqi(city, city_lookup)
     if live_data and live_data.get("live_aqi") is not None:
-        st.subheader(f"🌐 Live Monitoring Feed: {city}")
-        col1, col2, col3 = st.columns(3)
-        col1.metric("Live US AQI (EPA)", live_data["live_aqi"])
-        col2.metric("PM2.5 Concentration", f"{live_data.get('pm25', 'N/A')} µg/m³")
-        col3.metric("Last Updated", str(live_data.get("time", "N/A")))
-        st.caption(f"📍 Station: **{live_data.get('station', city)}** | Calculated using US EPA PM2.5 breakpoints.")
-        st.divider()
+        aqi_val = live_data["live_aqi"]
+        card_bg, cat_label, avatar = get_aqi_theme(aqi_val)
+
+        st.markdown(f"""
+        <div class="aqi-hero-card" style="background: {card_bg};">
+            <div class="aqi-hero-header">
+                <div>
+                    <span style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.9;">🌐 LIVE MONITORING FEED — {city.upper()}</span>
+                    <div class="aqi-hero-val">{aqi_val} <span style="font-size: 1.1rem; font-weight:600;">US AQI</span></div>
+                    <div class="aqi-hero-cat">{cat_label}</div>
+                </div>
+                <div class="aqi-hero-avatar">{avatar}</div>
+            </div>
+            <div class="aqi-hero-footer">
+                <span>📍 Station: {live_data.get('station', city)}</span>
+                <span>Main Pollutant: PM2.5 ({live_data.get('pm25', 'N/A')} µg/m³)</span>
+                <span>Updated: {live_data.get('time', 'N/A')}</span>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
     if predict_btn:
         row = build_row(city, month, season, is_smog_season, is_crop_burning_season, is_monsoon_season)
