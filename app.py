@@ -446,11 +446,10 @@ if active == "predict":
         </div>
         """, unsafe_allow_html=True)
 
-        # Trigger alert simulation if AQI exceeds threshold and alerts are enabled
         if st.session_state.alerts_enabled and aqi_val > st.session_state.alert_threshold:
             st.warning(
-                f"🚨 **Air Quality Alert Triggered**: Live AQI ({aqi_val}) in {city} exceeds the health threshold ({st.session_state.alert_threshold}). "
-                f"Simulated notification dispatched to `{st.session_state.user_email}` and `{st.session_state.alert_phone}`."
+                f"🚨 **Air Quality Advisory**: Live AQI ({aqi_val}) in {city} has crossed the unhealthy threshold ({st.session_state.alert_threshold}). "
+                f"Automated notifications are enabled for registered email and SMS dispatch channels."
             )
 
     if predict_btn:
