@@ -1,6 +1,12 @@
 import requests
+import streamlit as st
 
-API_TOKEN = "956d68b497aaec4796bab052547399e7e014bff1"
+def get_api_token():
+    """Reads the WAQI token from Streamlit secrets. Falls back to None if not configured."""
+    try:
+        return st.secrets["WAQI_TOKEN"]
+    except Exception:
+        return None
 
 def pm25_to_us_aqi(pm25):
     if pm25 is None or pm25 == "N/A":
@@ -31,18 +37,22 @@ def pm25_to_us_aqi(pm25):
 
 
 def get_live_city_aqi(city_name, city_lookup):
+    api_token = get_api_token()
+    if not api_token:
+        return None
+
     meta = city_lookup.get(city_name, {})
     lat = meta.get("latitude")
     lon = meta.get("longitude")
 
-    query_url = f"https://api.waqi.info/feed/{city_name.lower()}-pakistan/?token={API_TOKEN}"
-    
+    query_url = f"https://api.waqi.info/feed/{city_name.lower()}-pakistan/?token={api_token}"
+
     try:
         response = requests.get(query_url, timeout=5)
         data = response.json()
 
         if data.get("status") != "ok" and lat and lon:
-            query_url = f"https://api.waqi.info/feed/geo:{lat};{lon}/?token={API_TOKEN}"
+            query_url = f"https://api.waqi.info/feed/geo:{lat};{lon}/?token={api_token}"
             response = requests.get(query_url, timeout=5)
             data = response.json()
 
