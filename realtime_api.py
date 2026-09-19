@@ -100,3 +100,10 @@ def get_live_network_aqi(city_lookup):
     for city_name in city_lookup.keys():
         results[city_name] = get_live_city_aqi(city_name, city_lookup)
     return results
+def get_live_network_aqi(city_lookup):
+    """Fetch live AQI for every city in city_lookup. Returns {city_name: live_data_or_None}.
+    Purely additive helper - does not alter get_live_city_aqi's existing behavior or return shape."""
+    results = {}
+    for city_name in city_lookup.keys():
+        results[city_name] = get_live_city_aqi(city_name, city_lookup)
+    return results
