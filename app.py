@@ -70,6 +70,16 @@ st.markdown(f"""
 
     .stTabs {{ display: none !important; }}
 
+    /* Keep the custom masthead fully below Streamlit's fixed top chrome. */
+    header[data-testid="stHeader"] {{
+        background: transparent !important;
+        box-shadow: none !important;
+        z-index: 1 !important;
+    }}
+    .stAppViewContainer .main .block-container {{
+        padding-top: 5.2rem !important;
+    }}
+
     /* Header Masthead */
     .masthead-container {{
         display: flex;
@@ -221,8 +231,8 @@ st.markdown(f"""
 
     /* Product-grade UI upgrade */
     .brand-wrap {{ display:flex; align-items:center; gap:14px; }}
-    .masthead-logo {{ width:54px; height:54px; object-fit:contain; display:block; flex:none; margin-top:1px; }}
-    .masthead-logo-wrap {{ display:flex; align-items:center; justify-content:center; width:64px; min-width:64px; height:64px; overflow:visible; }}
+    .masthead-logo {{ width:54px; height:54px; object-fit:contain; display:block; flex:none; margin-top:0; }}
+    .masthead-logo-wrap {{ display:flex; align-items:center; justify-content:center; width:64px; min-width:64px; height:64px; overflow:visible; padding-top:2px; box-sizing:border-box; }}
     .eyebrow {{ font-size:.70rem; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:#2563EB !important; margin-bottom:3px; }}
     .status-strip {{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:0 0 20px; }}
     .status-pill {{ background:#FFFFFF; border:1px solid #E2E8F0; border-radius:11px; padding:10px 12px; min-height:56px; }}
@@ -276,7 +286,7 @@ try:
 except Exception:
     _logo_b64 = ""
 
-head_left, head_right = st.columns([5, 1])
+head_left, head_right = st.columns([5, 1], vertical_alignment="center")
 with head_left:
     logo_col, brand_col = st.columns([0.95, 7])
     with logo_col:
