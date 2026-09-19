@@ -60,7 +60,7 @@ if active not in NAV_KEYS:
 st.markdown(f"""
 <style>
     .stApp {{
-        background-color: #F8FAFC;
+        background: radial-gradient(circle at 8% 0%, rgba(37,99,235,0.055), transparent 30%), linear-gradient(180deg, #F1F5F9 0%, #F7F9FC 45%, #EEF3F8 100%);
     }}
     h1, h2, h3, h4, p, label, .stMarkdown, .stCaption, li {{ 
         color: {TEXT_MAIN} !important; 
@@ -249,6 +249,17 @@ st.markdown(f"""
     .arch-step .title {{ display:block; color:#0F172A !important; font-weight:850; font-size:.82rem; }}
     .arch-step .desc {{ display:block; color:#64748B !important; font-size:.70rem; margin-top:3px; }}
     .footer-line {{ margin-top:36px; padding:18px 0 8px; border-top:1px solid #E2E8F0; color:#94A3B8 !important; font-size:.70rem; text-align:center; }}
+    /* Subtle environmental-tech canvas: more depth without making the UI noisy */
+    .block-container {{ padding-top: 1.2rem !important; padding-bottom: 2.2rem !important; }}
+    div[data-testid="stVerticalBlockBorderWrapper"] {{ border-color:#E2E8F0 !important; border-radius:14px !important; }}
+    div[data-testid="stDataFrame"] {{ border:1px solid #E2E8F0; border-radius:12px; overflow:hidden; box-shadow:0 2px 8px rgba(15,23,42,.035); }}
+    div[data-testid="stDownloadButton"] button {{ border-radius:9px !important; font-weight:750 !important; border:1px solid #CBD5E1 !important; }}
+    div.stButton > button {{ border-radius:9px !important; font-weight:800 !important; min-height:42px; }}
+    div[data-testid="stExpander"] {{ border:1px solid #E2E8F0 !important; border-radius:12px !important; background:rgba(255,255,255,.68) !important; }}
+    .nav-bar-container {{ backdrop-filter: blur(8px); }}
+    .infocard, div[data-testid="stMetric"], .insight-card, .hero-meta-card, .status-pill {{ backdrop-filter: blur(4px); }}
+    .section-heading {{ letter-spacing:-.02em; }}
+
     @media (max-width:900px) {{ .status-strip{{grid-template-columns:repeat(2,1fr)}} .hero-meta{{grid-template-columns:1fr}} .nav-bar-container{{grid-template-columns:repeat(2,1fr)}} }}
 </style>
 """, unsafe_allow_html=True)
@@ -374,7 +385,7 @@ def get_aqi_theme(val):
     elif val <= 200:
         return "#EF4444", "Unhealthy", "😷"
     elif val <= 300:
-        return "#8B5CF6", "Very Unhealthy", "🤢"
+        return "#8B5CF6", "Very Unhealthy", "!"
     else:
         return "#6B21A8", "Hazardous", "🚨"
 
