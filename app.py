@@ -10,7 +10,7 @@ from realtime_api import get_live_city_aqi
 # Page configuration
 st.set_page_config(
     page_title="PakAir Intelligence | Environmental Monitoring", 
-    page_icon="🟢", 
+    page_icon="pakair_icon.png", 
     layout="wide"
 )
 
@@ -387,12 +387,12 @@ with st.sidebar:
         st.session_state.user_email = st.text_input(
             "Alert Email", 
             value=st.session_state.user_email,
-            placeholder="e.g. name@example.com"
+            placeholder="e.g. name@example.com", autocomplete="off"
         )
         st.session_state.alert_phone = st.text_input(
             "Alert SMS Phone", 
             value=st.session_state.alert_phone,
-            placeholder="e.g. +92 300 1234567"
+            placeholder="e.g. +92 300 1234567", autocomplete="off"
         )
 
     elif active == "map":
