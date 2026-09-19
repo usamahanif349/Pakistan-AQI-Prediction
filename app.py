@@ -217,18 +217,61 @@ st.markdown(f"""
         padding-bottom: 6px;
         border-bottom: 2px solid #334155;
     }}
+
+    /* Product-grade UI upgrade */
+    .brand-wrap {{ display:flex; align-items:center; gap:14px; }}
+    .eyebrow {{ font-size:.70rem; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:#2563EB !important; margin-bottom:3px; }}
+    .status-strip {{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:0 0 20px; }}
+    .status-pill {{ background:#FFFFFF; border:1px solid #E2E8F0; border-radius:11px; padding:10px 12px; min-height:56px; }}
+    .status-pill .label {{ display:block; font-size:.66rem; text-transform:uppercase; letter-spacing:.08em; color:#64748B !important; font-weight:800; }}
+    .status-pill .value {{ display:block; margin-top:3px; font-size:.86rem; color:#0F172A !important; font-weight:800; }}
+    .online-dot {{ display:inline-block; width:7px; height:7px; border-radius:50%; background:#10B981; margin-right:6px; vertical-align:middle; box-shadow:0 0 0 3px rgba(16,185,129,.12); }}
+    .page-intro {{ display:flex; justify-content:space-between; align-items:flex-end; gap:20px; margin:4px 0 18px; }}
+    .page-intro h2 {{ margin:0 !important; font-size:1.55rem !important; letter-spacing:-.025em; }}
+    .page-intro p {{ margin:4px 0 0 !important; color:#64748B !important; font-size:.92rem; }}
+    .hero-meta {{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:-8px 0 20px; }}
+    .hero-meta-card {{ background:#FFFFFF; border:1px solid #E2E8F0; border-radius:10px; padding:12px 14px; }}
+    .hero-meta-label {{ font-size:.66rem; color:#64748B !important; text-transform:uppercase; letter-spacing:.08em; font-weight:800; }}
+    .hero-meta-value {{ margin-top:3px; font-size:.94rem; color:#0F172A !important; font-weight:800; }}
+    .section-kicker {{ font-size:.70rem; font-weight:800; color:#2563EB !important; letter-spacing:.10em; text-transform:uppercase; margin:24px 0 5px; }}
+    .section-heading {{ font-size:1.28rem; font-weight:850; color:#0F172A !important; margin:0 0 12px; }}
+    .insight-card {{ background:linear-gradient(135deg,#FFFFFF 0%,#F8FAFC 100%); border:1px solid #E2E8F0; border-radius:14px; padding:15px 17px; min-height:103px; box-shadow:0 2px 8px rgba(15,23,42,.035); }}
+    .insight-card .k {{ color:#64748B !important; font-size:.69rem; font-weight:800; text-transform:uppercase; letter-spacing:.08em; }}
+    .insight-card .v {{ color:#0F172A !important; font-size:1.38rem; font-weight:900; margin-top:4px; }}
+    .insight-card .s {{ color:#64748B !important; font-size:.76rem; margin-top:3px; }}
+    .legend-row {{ display:flex; flex-wrap:wrap; gap:7px; margin:4px 0 14px; }}
+    .legend-item {{ display:inline-flex; align-items:center; gap:6px; padding:6px 9px; border-radius:999px; background:#FFFFFF; border:1px solid #E2E8F0; color:#334155 !important; font-size:.71rem; font-weight:700; }}
+    .legend-dot {{ width:8px; height:8px; border-radius:50%; display:inline-block; }}
+    .callout {{ border:1px solid #BFDBFE; background:#EFF6FF; border-radius:12px; padding:12px 14px; margin:12px 0; color:#334155 !important; }}
+    .callout strong {{ color:#1D4ED8 !important; }}
+    .arch-step {{ background:#FFFFFF; border:1px solid #E2E8F0; border-radius:12px; padding:12px; text-align:center; min-height:86px; }}
+    .arch-step .num {{ display:inline-flex; align-items:center; justify-content:center; width:25px; height:25px; border-radius:50%; background:#DBEAFE; color:#1D4ED8 !important; font-weight:900; font-size:.75rem; margin-bottom:6px; }}
+    .arch-step .title {{ display:block; color:#0F172A !important; font-weight:850; font-size:.82rem; }}
+    .arch-step .desc {{ display:block; color:#64748B !important; font-size:.70rem; margin-top:3px; }}
+    .footer-line {{ margin-top:36px; padding:18px 0 8px; border-top:1px solid #E2E8F0; color:#94A3B8 !important; font-size:.70rem; text-align:center; }}
+    @media (max-width:900px) {{ .status-strip{{grid-template-columns:repeat(2,1fr)}} .hero-meta{{grid-template-columns:1fr}} .nav-bar-container{{grid-template-columns:repeat(2,1fr)}} }}
 </style>
 """, unsafe_allow_html=True)
 
 # ---------- Top Masthead ----------
-st.markdown("""
-<div class="masthead-container">
-    <div>
+head_left, head_right = st.columns([5, 1])
+with head_left:
+    logo_col, brand_col = st.columns([0.55, 7])
+    with logo_col:
+        st.image("pakair_icon.png", width=52)
+    with brand_col:
+        st.markdown("""
+        <div class="eyebrow">Environmental Intelligence Platform</div>
         <h1 class="brand-title">PakAir Intelligence</h1>
         <p class="brand-subtitle">Real-Time Environmental Monitoring & Predictive Analytics for Pakistan</p>
+        """, unsafe_allow_html=True)
+with head_right:
+    st.markdown("""
+    <div style="text-align:right;padding-top:8px;">
+        <div style="font-size:.66rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#64748B;">Platform Status</div>
+        <div style="margin-top:5px;font-size:.84rem;font-weight:800;color:#0F172A;"><span class="online-dot"></span>Operational</div>
     </div>
-</div>
-""", unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
 
 # ---------- Navigation Segmented Control ----------
 nav_html = "".join([
@@ -261,6 +304,15 @@ reg_model, clf_model, le_city, le_season, le_province, city_lookup, history = lo
 
 SEASONS = list(le_season.classes_)
 CITIES = list(le_city.classes_)
+
+st.markdown(f"""
+<div class="status-strip">
+  <div class="status-pill"><span class="label">Coverage</span><span class="value">{len(CITIES)} Pakistani cities</span></div>
+  <div class="status-pill"><span class="label">Historical window</span><span class="value">{int(history['year'].min())}–{int(history['year'].max())}</span></div>
+  <div class="status-pill"><span class="label">Prediction engine</span><span class="value">Gradient Boosting</span></div>
+  <div class="status-pill"><span class="label">Live feed</span><span class="value"><span class="online-dot"></span>WAQI integration</span></div>
+</div>
+""", unsafe_allow_html=True)
 MONTH_NAMES = ["January", "February", "March", "April", "May", "June",
                "July", "August", "September", "October", "November", "December"]
 MONTH_OPTIONS = [f"{i+1} — {name}" for i, name in enumerate(MONTH_NAMES)]
@@ -354,10 +406,21 @@ def draw_gauge(value, color):
     ax.axis("off")
     return fig
 
+def page_intro(title, subtitle, kicker="PakAir Intelligence"):
+    st.markdown(f"""<div class="page-intro"><div><div class="eyebrow">{kicker}</div><h2>{title}</h2><p>{subtitle}</p></div></div>""", unsafe_allow_html=True)
+
+def insight_card(label, value, subtitle=""):
+    st.markdown(f"""<div class="insight-card"><div class="k">{label}</div><div class="v">{value}</div><div class="s">{subtitle}</div></div>""", unsafe_allow_html=True)
+
+def add_footer():
+    st.markdown("""<div class="footer-line">PakAir Intelligence · Environmental Monitoring & Predictive Analytics · Prototype Platform · Historical analytics + live WAQI integration</div>""", unsafe_allow_html=True)
+
 # ==================================================================
 #  SIDEBAR — CONTROLS & USER SETTINGS
 # ==================================================================
 with st.sidebar:
+    st.image("pakair_icon.png", width=42)
+    st.markdown("<div style=\"font-size:1.05rem;font-weight:850;color:#F8FAFC;margin:-2px 0 3px;\">PakAir Intelligence</div><div style=\"font-size:.72rem;color:#94A3B8;margin-bottom:18px;\">Pakistan Air Quality Intelligence</div>", unsafe_allow_html=True)
     if active == "predict":
         st.markdown('<p class="sb-title">Predict Inputs</p>', unsafe_allow_html=True)
         
@@ -430,6 +493,7 @@ with st.sidebar:
 
 # ===================== PREDICT =====================
 if active == "predict":
+    page_intro("Air Quality Command Center", "Monitor current conditions, inspect health status, and run an AI-powered AQI prediction.")
     live_data = get_live_city_aqi(city, city_lookup)
     if live_data and live_data.get("live_aqi") is not None:
         aqi_val = live_data["live_aqi"]
@@ -453,6 +517,14 @@ if active == "predict":
         </div>
         """, unsafe_allow_html=True)
 
+        st.markdown(f"""
+        <div class="hero-meta">
+          <div class="hero-meta-card"><div class="hero-meta-label">PM2.5</div><div class="hero-meta-value">{live_data.get('pm25', 'N/A')} µg/m³</div></div>
+          <div class="hero-meta-card"><div class="hero-meta-label">Monitoring Station</div><div class="hero-meta-value">{live_data.get('station', city)}</div></div>
+          <div class="hero-meta-card"><div class="hero-meta-label">Health Guidance</div><div class="hero-meta-value">{HEALTH_ADVICE.get(cat_label, '')}</div></div>
+        </div>
+        """, unsafe_allow_html=True)
+
         if st.session_state.alerts_enabled and aqi_val > st.session_state.alert_threshold:
             recipient_info = []
             if st.session_state.user_email:
@@ -473,7 +545,7 @@ if active == "predict":
         pred_category = clf_model.predict(row)[0]
         cat_color = CATEGORY_COLORS.get(pred_category, PRIMARY)
 
-        st.subheader("Prediction")
+        st.markdown('<div class="section-kicker">AI inference</div><div class="section-heading">AQI Prediction Result</div>', unsafe_allow_html=True)
         g1, g2 = st.columns([1, 1])
         with g1:
             st.pyplot(draw_gauge(pred_aqi, cat_color))
@@ -495,7 +567,9 @@ if active == "predict":
             unsafe_allow_html=True,
         )
 
-        st.subheader("What drove this prediction?")
+        st.markdown(f"""<div class="callout"><strong>Prediction context</strong><br>This estimate uses the selected city, month, season, and environmental-season indicators. It is a model output and should be interpreted alongside the live monitoring feed when available.</div>""", unsafe_allow_html=True)
+
+        st.markdown('<div class="section-kicker">Model transparency</div><div class="section-heading">What drove this prediction?</div>', unsafe_allow_html=True)
         importances = reg_model.feature_importances_
         imp_df = pd.DataFrame(
             {"feature": row.columns.tolist(), "importance": importances}
@@ -528,8 +602,19 @@ if active == "predict":
     else:
         st.info("Set your inputs in the sidebar, then click **Predict AQI**.")
 
+    st.markdown('<div class="section-kicker">AQI reference</div><div class="section-heading">Health Category Guide</div>', unsafe_allow_html=True)
+    st.markdown("""<div class="legend-row">
+      <span class="legend-item"><span class="legend-dot" style="background:#10B981"></span>0–50 Good</span>
+      <span class="legend-item"><span class="legend-dot" style="background:#F59E0B"></span>51–100 Moderate</span>
+      <span class="legend-item"><span class="legend-dot" style="background:#F97316"></span>101–150 USG</span>
+      <span class="legend-item"><span class="legend-dot" style="background:#EF4444"></span>151–200 Unhealthy</span>
+      <span class="legend-item"><span class="legend-dot" style="background:#8B5CF6"></span>201–300 Very Unhealthy</span>
+      <span class="legend-item"><span class="legend-dot" style="background:#6B21A8"></span>301+ Hazardous</span>
+    </div>""", unsafe_allow_html=True)
+
 # ===================== MAP (INTERACTIVE GEOSPATIAL DASHBOARD) =====================
 elif active == "map":
+    page_intro("Pakistan Air Quality Map", "Explore predicted AQI conditions across the monitored city network.")
     map_rows = []
     for c in CITIES:
         row = build_row(c, map_month, map_season, map_smog, map_crop, map_monsoon)
@@ -630,6 +715,26 @@ elif active == "map":
         }
     )
 
+    st.markdown('<div class="section-kicker">Network overview</div><div class="section-heading">Predicted AQI Snapshot</div>', unsafe_allow_html=True)
+    mc1, mc2, mc3 = st.columns(3)
+    with mc1:
+        insight_card("Network average", f"{map_df['Predicted_AQI'].mean():.1f}", "Predicted AQI across monitored cities")
+    with mc2:
+        highest = map_df.loc[map_df['Predicted_AQI'].idxmax()]
+        insight_card("Highest predicted", f"{highest['Predicted_AQI']:.1f}", f"{highest['city']} · {highest['Category']}")
+    with mc3:
+        lowest = map_df.loc[map_df['Predicted_AQI'].idxmin()]
+        insight_card("Lowest predicted", f"{lowest['Predicted_AQI']:.1f}", f"{lowest['city']} · {lowest['Category']}")
+
+    st.markdown("""<div class="legend-row">
+      <span class="legend-item"><span class="legend-dot" style="background:#10B981"></span>Good</span>
+      <span class="legend-item"><span class="legend-dot" style="background:#F59E0B"></span>Moderate</span>
+      <span class="legend-item"><span class="legend-dot" style="background:#F97316"></span>USG</span>
+      <span class="legend-item"><span class="legend-dot" style="background:#EF4444"></span>Unhealthy</span>
+      <span class="legend-item"><span class="legend-dot" style="background:#8B5CF6"></span>Very Unhealthy</span>
+      <span class="legend-item"><span class="legend-dot" style="background:#6B21A8"></span>Hazardous</span>
+    </div>""", unsafe_allow_html=True)
+
     st.pydeck_chart(r)
 
     st.subheader("Regional City Rankings")
@@ -639,11 +744,23 @@ elif active == "map":
 
 # ===================== HISTORICAL TREND =====================
 elif active == "trend":
+    page_intro("Historical Air Quality", "Explore long-term AQI behavior and identify recurring pollution patterns by city.")
     city_hist = history[history["city"] == trend_city].copy()
     city_hist["date"] = pd.to_datetime(
         city_hist["year"].astype(str) + "-" + city_hist["month"].astype(str) + "-01"
     )
     city_hist = city_hist.sort_values("date")
+
+    recent = city_hist.tail(12)
+    recent_avg = recent["aqi_us"].mean() if len(recent) else np.nan
+    st.markdown('<div class="section-kicker">Historical profile</div><div class="section-heading">Long-Term AQI Snapshot</div>', unsafe_allow_html=True)
+    tc1, tc2, tc3 = st.columns(3)
+    with tc1:
+        insight_card("Average AQI", f"{city_hist['aqi_us'].mean():.1f}", "Across available historical records")
+    with tc2:
+        insight_card("Recent-period average", f"{recent_avg:.1f}", "Last 12 recorded observations")
+    with tc3:
+        insight_card("Peak AQI", f"{city_hist['aqi_us'].max():.1f}", "Highest recorded value in the selected city")
 
     fig, ax = plt.subplots(figsize=(10, 4))
     style_axes(ax, fig)
@@ -679,6 +796,7 @@ elif active == "trend":
 
 # ===================== COMPARE CITIES =====================
 elif active == "compare":
+    page_intro("Multi-City Comparison", "Compare model-predicted AQI conditions under the same selected environmental scenario.")
     if len(compare_cities) >= 2:
         cmp_rows = []
         for c in compare_cities:
@@ -688,6 +806,16 @@ elif active == "compare":
             cmp_rows.append({"City": c, "Predicted AQI": round(pred, 1), "Category": cat})
 
         cmp_df = pd.DataFrame(cmp_rows)
+
+        st.markdown('<div class="section-kicker">Scenario output</div><div class="section-heading">Comparison Snapshot</div>', unsafe_allow_html=True)
+        cc1, cc2, cc3 = st.columns(3)
+        with cc1:
+            insight_card("Cities selected", str(len(compare_cities)), "Included in this scenario")
+        with cc2:
+            insight_card("Scenario average", f"{cmp_df['Predicted AQI'].mean():.1f}", f"{cmp_season} · {MONTH_NAMES[cmp_month-1]}")
+        with cc3:
+            spread = cmp_df['Predicted AQI'].max() - cmp_df['Predicted AQI'].min()
+            insight_card("City-to-city spread", f"{spread:.1f}", "Difference between highest and lowest prediction")
 
         fig, ax = plt.subplots(figsize=(8, 4))
         style_axes(ax, fig)
@@ -706,12 +834,24 @@ elif active == "compare":
 
 # ===================== SEASONAL HEATMAP =====================
 elif active == "heatmap":
+    page_intro("Seasonal Pollution Heatmap", "Scan predicted AQI intensity across cities and months at a glance.")
     with st.spinner("Scoring every city across all 12 months..."):
         grid = np.zeros((len(CITIES), 12))
         for i, c in enumerate(CITIES):
             for m in range(1, 13):
                 row = build_row(c, m, hm_season, hm_smog, hm_crop, hm_monsoon)
                 grid[i, m - 1] = reg_model.predict(row)[0]
+
+    st.markdown('<div class="section-kicker">Annual scenario scan</div><div class="section-heading">12-Month × City Intelligence Matrix</div>', unsafe_allow_html=True)
+    hc1, hc2, hc3 = st.columns(3)
+    with hc1:
+        insight_card("Network mean", f"{grid.mean():.1f}", "Mean predicted AQI across all cells")
+    with hc2:
+        idx = np.unravel_index(np.argmax(grid), grid.shape)
+        insight_card("Highest cell", f"{grid[idx]:.1f}", f"{CITIES[idx[0]]} · {MONTH_NAMES[idx[1]]}")
+    with hc3:
+        idx_min = np.unravel_index(np.argmin(grid), grid.shape)
+        insight_card("Lowest cell", f"{grid[idx_min]:.1f}", f"{CITIES[idx_min[0]]} · {MONTH_NAMES[idx_min[1]]}")
 
     fig, ax = plt.subplots(figsize=(11, 5.5))
     fig.patch.set_alpha(0)
@@ -738,7 +878,32 @@ elif active == "heatmap":
 
 # ===================== ABOUT & METHODOLOGY =====================
 elif active == "about":
+    page_intro("Platform Methodology", "Understand the data coverage, feature engineering, predictive engine, and live-data architecture.")
     st.subheader("📚 Platform Architecture & Methodology")
+
+    ac1, ac2, ac3, ac4 = st.columns(4)
+    with ac1:
+        insight_card("Coverage", f"{len(CITIES)} cities", "Pakistan monitoring network")
+    with ac2:
+        insight_card("Historical data", f"{int(history['year'].min())}–{int(history['year'].max())}", "Model training window")
+    with ac3:
+        insight_card("Regression", "R² 0.974", "Reported model validation")
+    with ac4:
+        insight_card("Classification", "91.7%", "Reported accuracy")
+
+    st.markdown('<div class="section-kicker">System architecture</div><div class="section-heading">From environmental data to actionable intelligence</div>', unsafe_allow_html=True)
+    a1, a2, a3, a4, a5 = st.columns(5)
+    for col, num, title, desc in [
+        (a1, "1", "Data", "Historical + live feeds"),
+        (a2, "2", "Features", "Temporal + regional signals"),
+        (a3, "3", "Model", "Gradient Boosting"),
+        (a4, "4", "Prediction", "AQI + health band"),
+        (a5, "5", "Insights", "Maps, trends, alerts"),
+    ]:
+        with col:
+            st.markdown(f"""<div class="arch-step"><span class="num">{num}</span><span class="title">{title}</span><span class="desc">{desc}</span></div>""", unsafe_allow_html=True)
+
+    st.markdown("""<div class="callout"><strong>Prototype-to-platform direction</strong><br>PakAir Intelligence combines monitoring, prediction, spatial analysis, historical trends, and alerts in one interface. The current application is a software prototype designed around an expandable environmental monitoring architecture.</div>""", unsafe_allow_html=True)
     
     st.markdown("""
     ### 1. Dataset & Coverage
@@ -766,3 +931,5 @@ st.caption(
     "Model: hyperparameter-tuned Gradient Boosting (R² = 0.974 regression, 91.7% classification accuracy) — "
     "Pakistan Air Quality Index dataset, 10 cities, 2015–2025."
 )
+
+add_footer()
