@@ -954,7 +954,7 @@ elif active == "about":
     * **Geographic/Demographic Features:** Province encoding, Industrial Hub classification, Coastal indicator, Capital status, Population density (millions).
 
     ### 3. Model Performance & Validation
-    * **Regression Engine:** Hyperparameter-tuned **Gradient Boosting Regressor** ($R^2 = 0.974$, $\text{MAE} = 8.2\text{ AQI}$).
+    * **Regression Engine:** Hyperparameter-tuned **Gradient Boosting Regressor** ($R^2 = 0.974$, $\text{MAE} = 5.15\text{ AQI}$).
     * **Classification Engine:** **Gradient Boosting Classifier** predicting health risk bands ($91.7\%$ Accuracy).
 
     ### 4. Live API & EPA Breakpoint Standard
