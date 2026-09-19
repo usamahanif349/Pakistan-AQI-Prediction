@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import pydeck as pdk
-from realtime_api import get_live_city_aqi
+from realtime_api import get_live_city_aqi, get_live_network_aqi
 
 # Page configuration
 st.set_page_config(
@@ -40,6 +40,7 @@ TEXT_MUTED = "#64748B"    # Secondary text
 
 NAV = [
     ("predict", "Predict",          "Real-time feed & predictive engine"),
+    ("live_network", "Live Network", "Live vs. predicted, all cities"),
     ("map",     "Spatial Map",      "Geographical pollution scoring"),
     ("trend",   "Historical Trend", "2015–2025 seasonal analytics"),
     ("compare", "Multi-Compare",    "Multi-city scenario modeling"),
@@ -105,7 +106,7 @@ st.markdown(f"""
     /* Distinct Navigation Bar Container */
     .nav-bar-container {{
         display: grid;
-        grid-template-columns: repeat(6, 1fr);
+        grid-template-columns: repeat({len(NAV)}, 1fr);
         gap: 8px;
         background: #CBD5E1;
         padding: 6px;
@@ -493,6 +494,12 @@ with st.sidebar:
             placeholder="e.g. +92 300 1234567", autocomplete="off"
         )
 
+    elif active == "live_network":
+        st.markdown('<p class="sb-title">Live Network Inputs</p>', unsafe_allow_html=True)
+        st.caption("Compares today's live measured AQI against the model's prediction for the current month, across all monitored cities.")
+        ln_refresh = st.button("🔄 Refresh live network scan", use_container_width=True)
+        ln_divergence_threshold = st.slider("Flag divergence above (AQI points)", 10, 100, 30, 5)
+
     elif active == "map":
         st.markdown('<p class="sb-title">Map Inputs</p>', unsafe_allow_html=True)
         map_month = month_selector("Month", key="m_month")
@@ -559,6 +566,20 @@ if active == "predict":
           <div class="hero-meta-card"><div class="hero-meta-label">Health Guidance</div><div class="hero-meta-value">{HEALTH_ADVICE.get(cat_label, '')}</div></div>
         </div>
         """, unsafe_allow_html=True)
+
+        if live_data.get("forecast"):
+            st.markdown('<div class="section-kicker">Live outlook</div><div class="section-heading">5-Day Forecast</div>', unsafe_allow_html=True)
+            fc_cols = st.columns(len(live_data["forecast"]))
+            for col, day in zip(fc_cols, live_data["forecast"]):
+                day_color, day_label, day_emoji = get_aqi_theme(day["aqi"])
+                with col:
+                    st.markdown(f"""
+                    <div class="insight-card" style="text-align:center;">
+                        <div class="k">{day['date']}</div>
+                        <div class="v" style="color:{day_color} !important;">{day['aqi']}</div>
+                        <div class="s">{day_label} {day_emoji}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
 
         if st.session_state.alerts_enabled and aqi_val > st.session_state.alert_threshold:
             recipient_info = []
@@ -646,6 +667,105 @@ if active == "predict":
       <span class="legend-item"><span class="legend-dot" style="background:#8B5CF6"></span>201–300 Very Unhealthy</span>
       <span class="legend-item"><span class="legend-dot" style="background:#6B21A8"></span>301+ Hazardous</span>
     </div>""", unsafe_allow_html=True)
+
+# ===================== LIVE NETWORK (Live vs. Predicted, all cities) =====================
+elif active == "live_network":
+    page_intro("Live Network Validation", "Real-world check: how closely does the model's current prediction track today's actual measured AQI, across every monitored city?")
+
+    @st.cache_data(ttl=600, show_spinner=False)
+    def _cached_live_network(_cache_key):
+        return get_live_network_aqi(city_lookup)
+
+    cache_key = "refresh" if ln_refresh else "cached"
+    with st.spinner("Scanning live stations across all 10 cities..."):
+        if ln_refresh:
+            _cached_live_network.clear()
+        live_results = _cached_live_network(cache_key)
+
+    cur_month = pd.Timestamp.today().month
+    cur_season = SEASONS[0]
+    rows = []
+    for c in CITIES:
+        live = live_results.get(c)
+        live_aqi = live.get("live_aqi") if live else None
+
+        pred_row = build_row(c, cur_month, cur_season,
+                              cur_month in (11, 12, 1), False, cur_month in (7, 8, 9))
+        pred_aqi = reg_model.predict(pred_row)[0]
+
+        delta = (live_aqi - pred_aqi) if live_aqi is not None else None
+        rows.append({
+            "City": c,
+            "Live AQI": live_aqi if live_aqi is not None else "Unavailable",
+            "Model Prediction": round(pred_aqi, 1),
+            "Difference": round(delta, 1) if delta is not None else "—",
+            "Station": live.get("station", "—") if live else "—",
+        })
+
+    net_df = pd.DataFrame(rows)
+    available = net_df[net_df["Live AQI"] != "Unavailable"].copy()
+
+    st.markdown('<div class="section-kicker">Network summary</div><div class="section-heading">Live vs. Predicted, at a glance</div>', unsafe_allow_html=True)
+    n1, n2, n3 = st.columns(3)
+    with n1:
+        insight_card("Stations reporting", f"{len(available)} / {len(CITIES)}", "Live data successfully retrieved")
+    with n2:
+        if len(available):
+            mean_abs_diff = available["Difference"].abs().mean()
+            insight_card("Avg. absolute difference", f"{mean_abs_diff:.1f}", "Live AQI vs. model prediction")
+        else:
+            insight_card("Avg. absolute difference", "—", "No live data available")
+    with n3:
+        if len(available):
+            flagged = (available["Difference"].abs() > ln_divergence_threshold).sum()
+            insight_card("Cities flagged", str(flagged), f"Difference exceeds {ln_divergence_threshold} AQI points")
+        else:
+            insight_card("Cities flagged", "—", "No live data available")
+
+    def _highlight_divergence(row):
+        if row["Difference"] == "—":
+            return [""] * len(row)
+        if abs(row["Difference"]) > ln_divergence_threshold:
+            return ["background-color: #FEF3C7"] * len(row)
+        return [""] * len(row)
+
+    st.dataframe(net_df.style.apply(_highlight_divergence, axis=1), use_container_width=True, hide_index=True)
+    st.caption("Highlighted rows: live AQI and model prediction diverge by more than the threshold set in the sidebar. This can reflect a real short-term pollution event the model — trained on monthly averages — wouldn't capture, or a live-station data gap.")
+
+    if len(available):
+        fig, ax = plt.subplots(figsize=(10, 4.5))
+        style_axes(ax, fig)
+        x = np.arange(len(available))
+        width = 0.35
+        ax.bar(x - width/2, available["Live AQI"].astype(float), width, label="Live AQI", color="#2563EB")
+        ax.bar(x + width/2, available["Model Prediction"].astype(float), width, label="Model Prediction", color="#F59E0B")
+        ax.set_xticks(x)
+        ax.set_xticklabels(available["City"], rotation=30, ha="right")
+        ax.set_ylabel("AQI", color=TEXT_MAIN)
+        ax.set_title("Live measured AQI vs. model prediction, by city", color=PRIMARY)
+        ax.legend(facecolor="#FFFFFF", edgecolor=BORDER_COLOR, labelcolor=TEXT_MAIN)
+        st.pyplot(fig)
+
+    st.download_button("⬇️ Download live network snapshot as CSV", net_df.to_csv(index=False),
+                        file_name="aqi_live_vs_predicted.csv", mime="text/csv")
+
+    st.markdown('<div class="section-kicker">Live outlook</div><div class="section-heading">5-Day Forecast (Selected City)</div>', unsafe_allow_html=True)
+    forecast_city = st.selectbox("City for forecast", CITIES, key="ln_forecast_city")
+    fc_live = live_results.get(forecast_city)
+    if fc_live and fc_live.get("forecast"):
+        fc_cols = st.columns(len(fc_live["forecast"]))
+        for col, day in zip(fc_cols, fc_live["forecast"]):
+            day_color, day_label, day_emoji = get_aqi_theme(day["aqi"])
+            with col:
+                st.markdown(f"""
+                <div class="insight-card" style="text-align:center;">
+                    <div class="k">{day['date']}</div>
+                    <div class="v" style="color:{day_color} !important;">{day['aqi']}</div>
+                    <div class="s">{day_label} {day_emoji}</div>
+                </div>
+                """, unsafe_allow_html=True)
+    else:
+        st.info("Forecast data unavailable for this city right now — WAQI stations don't always publish a forecast for every location.")
 
 # ===================== MAP (INTERACTIVE GEOSPATIAL DASHBOARD) =====================
 elif active == "map":
@@ -965,6 +1085,9 @@ st.divider()
 st.caption(
     "Model: hyperparameter-tuned Gradient Boosting (R² = 0.974 regression, 91.7% classification accuracy) — "
     "Pakistan Air Quality Index dataset, 10 cities, 2015–2025."
+)
+
+add_footer()
 )
 
 add_footer()
