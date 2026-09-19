@@ -9,7 +9,7 @@ from realtime_api import get_live_city_aqi
 
 # Page configuration
 st.set_page_config(
-    page_title="Pakistan AQI Intelligence Platform", 
+    page_title="PakAir Intelligence | Environmental Monitoring", 
     page_icon="🟢", 
     layout="wide"
 )
@@ -18,9 +18,9 @@ st.set_page_config(
 #  SESSION STATE & USER PREFERENCES
 # ==================================================================
 if "user_email" not in st.session_state:
-    st.session_state.user_email = "usama@example.com"
+    st.session_state.user_email = ""
 if "alert_phone" not in st.session_state:
-    st.session_state.alert_phone = "+92 300 1234567"
+    st.session_state.alert_phone = ""
 if "alerts_enabled" not in st.session_state:
     st.session_state.alerts_enabled = True
 if "alert_threshold" not in st.session_state:
@@ -224,8 +224,8 @@ st.markdown(f"""
 st.markdown("""
 <div class="masthead-container">
     <div>
-        <h1 class="brand-title">Pakistan Air Quality Analytics</h1>
-        <p class="brand-subtitle">Real-time Environmental Monitoring & Predictive Machine Learning Engine</p>
+        <h1 class="brand-title">PakAir Intelligence</h1>
+        <p class="brand-subtitle">Real-Time Environmental Monitoring & Predictive Analytics for Pakistan</p>
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -361,7 +361,6 @@ with st.sidebar:
     if active == "predict":
         st.markdown('<p class="sb-title">Predict Inputs</p>', unsafe_allow_html=True)
         
-        # User Home City Preference
         default_city_idx = CITIES.index(st.session_state.home_city) if st.session_state.home_city in CITIES else 0
         city = st.selectbox("City", CITIES, index=default_city_idx, key="p_city")
         month = month_selector("Month", key="p_month")
@@ -385,8 +384,16 @@ with st.sidebar:
 
         st.markdown('<p class="sb-title" style="margin-top: 24px;">Alert Preferences</p>', unsafe_allow_html=True)
         st.session_state.alerts_enabled = st.toggle("Enable Unhealthy Alerts", value=st.session_state.alerts_enabled)
-        st.session_state.user_email = st.text_input("Alert Email", value=st.session_state.user_email)
-        st.session_state.alert_phone = st.text_input("Alert SMS Phone", value=st.session_state.alert_phone)
+        st.session_state.user_email = st.text_input(
+            "Alert Email", 
+            value=st.session_state.user_email,
+            placeholder="e.g. name@example.com"
+        )
+        st.session_state.alert_phone = st.text_input(
+            "Alert SMS Phone", 
+            value=st.session_state.alert_phone,
+            placeholder="e.g. +92 300 1234567"
+        )
 
     elif active == "map":
         st.markdown('<p class="sb-title">Map Inputs</p>', unsafe_allow_html=True)
@@ -447,9 +454,17 @@ if active == "predict":
         """, unsafe_allow_html=True)
 
         if st.session_state.alerts_enabled and aqi_val > st.session_state.alert_threshold:
+            recipient_info = []
+            if st.session_state.user_email:
+                recipient_info.append(f"`{st.session_state.user_email}`")
+            if st.session_state.alert_phone:
+                recipient_info.append(f"`{st.session_state.alert_phone}`")
+            
+            target_str = " and ".join(recipient_info) if recipient_info else "registered alert channels"
+
             st.warning(
-                f"🚨 **Air Quality Advisory**: Live AQI ({aqi_val}) in {city} has crossed the unhealthy threshold ({st.session_state.alert_threshold}). "
-                f"Automated notifications are enabled for registered email and SMS dispatch channels."
+                f"🚨 **Air Quality Alert Triggered**: Live AQI ({aqi_val}) in {city} exceeds the health threshold ({st.session_state.alert_threshold}). "
+                f"Simulated notification dispatched to {target_str}."
             )
 
     if predict_btn:
