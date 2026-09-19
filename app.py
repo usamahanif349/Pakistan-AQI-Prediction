@@ -1088,7 +1088,7 @@ st.caption(
 )
 
 add_footer()
-)
+
 
 add_footer()
 
