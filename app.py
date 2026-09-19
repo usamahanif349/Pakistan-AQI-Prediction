@@ -1,6 +1,7 @@
 import streamlit as st
 import joblib
 import json
+import base64
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -220,6 +221,8 @@ st.markdown(f"""
 
     /* Product-grade UI upgrade */
     .brand-wrap {{ display:flex; align-items:center; gap:14px; }}
+    .masthead-logo {{ width:54px; height:54px; object-fit:contain; display:block; flex:none; margin-top:1px; }}
+    .masthead-logo-wrap {{ display:flex; align-items:center; justify-content:center; width:64px; min-width:64px; height:64px; overflow:visible; }}
     .eyebrow {{ font-size:.70rem; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:#2563EB !important; margin-bottom:3px; }}
     .status-strip {{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:0 0 20px; }}
     .status-pill {{ background:#FFFFFF; border:1px solid #E2E8F0; border-radius:11px; padding:10px 12px; min-height:56px; }}
@@ -265,11 +268,22 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # ---------- Top Masthead ----------
+# Render the masthead logo as inline HTML so it cannot be clipped by a narrow
+# Streamlit column or overlap the app's top chrome.
+try:
+    with open("pakair_icon.png", "rb") as _logo_file:
+        _logo_b64 = base64.b64encode(_logo_file.read()).decode("utf-8")
+except Exception:
+    _logo_b64 = ""
+
 head_left, head_right = st.columns([5, 1])
 with head_left:
-    logo_col, brand_col = st.columns([0.55, 7])
+    logo_col, brand_col = st.columns([0.95, 7])
     with logo_col:
-        st.image("pakair_icon.png", width=52)
+        st.markdown(
+            f'<div class="masthead-logo-wrap"><img class="masthead-logo" src="data:image/png;base64,{_logo_b64}" alt="PakAir Intelligence logo"></div>',
+            unsafe_allow_html=True,
+        )
     with brand_col:
         st.markdown("""
         <div class="eyebrow">Environmental Intelligence Platform</div>
@@ -944,3 +958,4 @@ st.caption(
 )
 
 add_footer()
+
