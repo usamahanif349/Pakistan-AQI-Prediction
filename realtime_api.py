@@ -67,14 +67,36 @@ def get_live_city_aqi(city_name, city_lookup):
             time_str = data["data"].get("time", {}).get("s", "N/A")
             station_name = data["data"].get("city", {}).get("name", f"{city_name}, Pakistan")
 
+            # Parse the 5-day forecast that WAQI already includes in this same response
+            # (no extra API call needed) - purely additive, doesn't affect existing keys.
+            forecast_list = []
+            try:
+                daily_pm25 = data["data"].get("forecast", {}).get("daily", {}).get("pm25", [])
+                for day_entry in daily_pm25[:5]:
+                    day_aqi = pm25_to_us_aqi(day_entry.get("avg"))
+                    if day_aqi is not None:
+                        forecast_list.append({"date": day_entry.get("day"), "aqi": day_aqi})
+            except Exception:
+                forecast_list = []
+
             return {
                 "live_aqi": final_aqi,
                 "pm25": raw_pm25 if raw_pm25 is not None else "N/A",
                 "time": time_str,
-                "station": station_name
+                "station": station_name,
+                "forecast": forecast_list
             }
         else:
             return None
     except Exception as e:
         print(f"Error fetching live data: {e}")
         return None
+
+
+def get_live_network_aqi(city_lookup):
+    """Fetch live AQI for every city in city_lookup. Returns {city_name: live_data_or_None}.
+    Purely additive helper - does not alter get_live_city_aqi's existing behavior or return shape."""
+    results = {}
+    for city_name in city_lookup.keys():
+        results[city_name] = get_live_city_aqi(city_name, city_lookup)
+    return results
