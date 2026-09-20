@@ -1,4 +1,5 @@
 # Pakistan AQI Prediction: A Comparative Study of Machine Learning and Deep Learning Approaches
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22859477.svg)](https://doi.org/10.5281/zenodo.22859477)
 
 This project presents a comprehensive comparison of classical machine learning algorithms, an Artificial Neural Network (ANN), and a supplementary LSTM forecasting model for predicting Air Quality Index (AQI) values and health categories across 10 Pakistani cities using 10 years of monthly data (2015-2025).
 
