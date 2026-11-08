@@ -6,7 +6,6 @@ This project presents a comprehensive comparison of classical machine learning a
 ## 🔴 Live App
 
 **[Try the interactive AQI Predictor →](https://pakistan-aqi-prediction.streamlit.app)**
-*(update this link to match your actual deployed URL)*
 
 Explore predictions, an all-cities map, historical trends, city comparisons, and a seasonal heatmap — all powered by the tuned Gradient Boosting model from this study.
 
